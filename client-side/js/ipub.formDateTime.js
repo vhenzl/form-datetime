@@ -97,6 +97,8 @@
 		 * UIkit date & time picker
 		 */
 		uikitPicker: function() {
+			var that = this;
+
 			// Check if date field exists
 			if (this.$dateField.length) {
 				// Fix for UIkit different format
@@ -104,6 +106,22 @@
 
 				// Init date picker
 				$.UIkit.datepicker(this.$dateField, this.options.date);
+
+				// Listen to uikit events
+				this.$dateField.on('update.uk.datepicker', function() {
+					// Fire change event
+					that.$element.trigger('update.date.ipub.forms.datepicker', that.$element.val());
+				});
+
+				this.$dateField.on('show.uk.datepicker', function() {
+					// Fire change event
+					that.$element.trigger('show.date.ipub.forms.datepicker');
+				});
+
+				this.$dateField.on('hide.uk.datepicker', function() {
+					// Fire change event
+					that.$element.trigger('hide.date.ipub.forms.datepicker');
+				});
 			}
 
 			// Check if time field exists
@@ -120,16 +138,50 @@
 		 * Bootstrap date & time picker
 		 */
 		bootstrapPicker: function() {
+			var that = this;
+
 			// Check if date field exists
 			if (this.$dateField.length) {
 				// Init date picker
 				this.$dateField.datetimepicker(this.options.date);
+
+				// Listen to bootstrap events
+				this.$dateField.on('changeDate', function() {
+					// Fire change event
+					that.$element.trigger('update.date.ipub.forms.datepicker', that.$dateField.val());
+				});
+
+				this.$dateField.on('show', function() {
+					// Fire change event
+					that.$element.trigger('show.date.ipub.forms.datepicker');
+				});
+
+				this.$dateField.on('hide', function() {
+					// Fire change event
+					that.$element.trigger('hide.date.ipub.forms.datepicker');
+				});
 			}
 
 			// Check if time field exists
 			if (this.$timeField.length) {
 				// Init time picker
 				this.$timeField.datetimepicker(this.options.time);
+
+				// Listen to bootstrap events
+				this.$timeField.on('changeDate', function() {
+					// Fire change event
+					that.$element.trigger('update.time.ipub.forms.datepicker', that.$dateField.val());
+				});
+
+				this.$timeField.on('show', function() {
+					// Fire change event
+					that.$element.trigger('show.time.ipub.forms.datepicker');
+				});
+
+				this.$timeField.on('hide', function() {
+					// Fire change event
+					that.$element.trigger('hide.time.ipub.forms.datepicker');
+				});
 			}
 		}
 	}

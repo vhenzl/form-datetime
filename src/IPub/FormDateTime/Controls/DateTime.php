@@ -138,7 +138,7 @@ class DateTime extends Date
 			$control->addAttributes([
 				'name'				=> ($name . '[' . static::FIELD_NAME_TIME . ']'),
 				'type'				=> 'text',
-				'value'				=> $this->value->format($this->toPhpFormat($this->timeFormat)),
+				'value'				=> $this->value ? $this->value->format($this->toPhpFormat($this->timeFormat)) : NULL,
 				'required'			=> $this->isRequired(),
 				'disabled'			=> $this->isDisabled(),
 				'data-nette-rules'	=> self::exportRules($this->rules) ?: NULL,
@@ -153,20 +153,6 @@ class DateTime extends Date
 		} else {
 			return parent::getControlPart($key);
 		}
-	}
-
-	public function loadHttpData()
-	{
-		// Get date value
-		$date = $this->getHttpData(Forms\Form::DATA_LINE, '[' . static::FIELD_NAME_DATE . ']');
-		// Get time value
-		$time = $this->getHttpData(Forms\Form::DATA_LINE, '[' . static::FIELD_NAME_TIME . ']');
-
-		// Store control value
-		$this->value = Utils\DateTime::createFromFormat(
-			$this->toPhpFormat(sprintf(static::MERGE_FIELDS_PATTERN, $this->dateFormat, $this->timeFormat)),
-			sprintf(static::MERGE_FIELDS_PATTERN, $date, $time)
-		);
 	}
 
 	/**
@@ -197,18 +183,21 @@ class DateTime extends Date
 			'language'				=> $this->language,
 			// Whether or not to force parsing of the input value when the picker is closed
 			'forceParse'			=> $this->forceParse,
-			//
-			'initialDate'			=> $this->value ? $this->value->format($this->toPhpFormat(sprintf(static::MERGE_FIELDS_PATTERN, $this->dateFormat, $this->timeFormat))) : ''
 		];
 
 		// The earliest date that may be selected
 		if ($this->startDateTime !== NULL) {
-			$settings['time']['startDate'] = $this->startDateTime->format($this->toPhpFormat($this->dateFormat));
+			$settings['time']['startDate'] = $this->startDateTime->format($this->getDateTimeFormat(TRUE));
 		}
 
 		// The latest date that may be selected
 		if ($this->endDateTime !== NULL) {
-			$settings['time']['endDate'] = $this->endDateTime->format($this->toPhpFormat($this->dateFormat));
+			$settings['time']['endDate'] = $this->endDateTime->format($this->getDateTimeFormat(TRUE));
+		}
+
+		// Default date
+		if ($this->value) {
+			$settings['date']['initialDate'] = $this->value->format($this->getDateTimeFormat(TRUE));
 		}
 
 		return $settings;
@@ -225,38 +214,110 @@ class DateTime extends Date
 	 */
 	public function setValue($value)
 	{
-		// DateTime object
-		if ($value instanceof Utils\DateTime || $value instanceof \DateTime) {
+		// Nette\Utils\DateTime object
+		if ($value instanceof Utils\DateTime) {
 			$rawValue = $value;
 
-			// Timestamp
+			// \DateTime object
+		} else if($value instanceof \DateTime) {
+			$rawValue = $value;
+
+			// Convert \DateTime to \Nette\Utils\DateTime
+			$value = Utils\DateTime::createFromFormat($this->getDateTimeFormat(TRUE), $value->format($this->getDateTimeFormat(TRUE)));
+
+		// Timestamp
 		} else if (is_int($value)) {
 			$rawValue = $value;
-			$value = (new Utils\DateTime())->setTimestamp($value)->format($this->toPhpFormat($this->toPhpFormat(sprintf(static::MERGE_FIELDS_PATTERN, $this->dateFormat, $this->timeFormat))));
+			$value = (new Utils\DateTime())->setTimestamp($value);
 
-			// Empty value
+			// Check if value is valid timestamp
+			if ($value === FALSE) {
+				throw new Nette\InvalidArgumentException;
+			}
+
+		// Empty value
 		} else if (empty($value)) {
 			$rawValue = $value;
 			$value = NULL;
 
-			// String representation
+		// String representation
 		} else if (is_string($value)) {
 			$rawValue = $value;
-			$value = Utils\DateTime::createFromFormat($this->toPhpFormat($this->toPhpFormat(sprintf(static::MERGE_FIELDS_PATTERN, $this->dateFormat, $this->timeFormat))), $value)
-				->format($this->toPhpFormat($this->toPhpFormat(sprintf(static::MERGE_FIELDS_PATTERN, $this->dateFormat, $this->timeFormat))));
+
+			$value = Utils\DateTime::createFromFormat($this->getDateTimeFormat(TRUE), $value);
+
+			// Check if value is valid string
+			if ($value === FALSE) {
+				throw new Nette\InvalidArgumentException;
+			}
 
 		} else {
 			throw new Nette\InvalidArgumentException;
 		}
 
 		if (!isset($rawValue) && isset($value)) {
-			$rawValue = $value->format($this->toPhpFormat($this->toPhpFormat(sprintf(static::MERGE_FIELDS_PATTERN, $this->dateFormat, $this->timeFormat))));
+			$rawValue = $value->format($this->getDateTimeFormat(TRUE));
 		}
 
 		$this->value	= $value;
 		$this->rawValue	= $rawValue;
 
 		return $this;
+	}
+
+	/**
+	 * @return Utils\DateTime|null
+	 */
+	public function getValue()
+	{
+		$value = parent::getValue();
+
+		if ($value instanceof Utils\DateTime) {
+			return $value;
+
+		} else if ($value === FALSE || $value === NULL) {
+			return NULL;
+
+		} else {
+			$value = Utils\DateTime::createFromFormat($this->getDateTimeFormat(TRUE), $value);
+
+			if ($value === FALSE) {
+				return NULL;
+			}
+		}
+
+		return $value;
+	}
+
+	public function loadHttpData()
+	{
+		try {
+			// Get date value
+			$date = $this->getHttpData(Forms\Form::DATA_LINE, '[' . static::FIELD_NAME_DATE . ']');
+			// Get time value
+			$time = $this->getHttpData(Forms\Form::DATA_LINE, '[' . static::FIELD_NAME_TIME . ']');
+
+			$this->setValue(sprintf(static::MERGE_FIELDS_PATTERN, $date, $time));
+
+		} catch (Nette\InvalidArgumentException $ex) {
+			$this->value = NULL;
+		}
+	}
+
+	/**
+	 * @param bool $php
+	 *
+	 * @return string
+	 */
+	protected function getDateTimeFormat($php = FALSE)
+	{
+		$format = sprintf(static::MERGE_FIELDS_PATTERN, $this->dateFormat, $this->timeFormat);
+
+		if ($php) {
+			$format = $this->toPhpFormat($format);
+		}
+
+		return $format;
 	}
 
 	/**

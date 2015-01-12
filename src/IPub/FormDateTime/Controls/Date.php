@@ -20,6 +20,7 @@ use Nette\Utils;
 
 use IPub;
 use IPub\FormDateTime;
+use Tracy\Debugger;
 
 class Date extends BaseControl
 {
@@ -325,7 +326,7 @@ class Date extends BaseControl
 			$control->addAttributes([
 				'name'				=> ($name . '[' . static::FIELD_NAME_DATE . ']'),
 				'type'				=> 'text',
-				'value'				=> $this->value->format($this->toPhpFormat($this->dateFormat)),
+				'value'				=> $this->value ? $this->value->format($this->toPhpFormat($this->dateFormat)) : NULL,
 				'required'			=> $this->isRequired(),
 				'disabled'			=> $this->isDisabled(),
 				'data-nette-rules'	=> self::exportRules($this->rules) ?: NULL,
@@ -347,15 +348,6 @@ class Date extends BaseControl
 	public function getLabelPart()
 	{
 		return NULL;
-	}
-
-	public function loadHttpData()
-	{
-		// Get date value
-		$date = $this->getHttpData(Forms\Form::DATA_LINE, '[' . static::FIELD_NAME_DATE . ']');
-
-		// Store control value
-		$this->value = Utils\DateTime::createFromFormat($this->toPhpFormat($this->dateFormat), $date);
 	}
 
 	/**
@@ -390,21 +382,19 @@ class Date extends BaseControl
 				'forceParse'			=> $this->forceParse,
 				// This option is currently only available in the component implementation
 				'pickerPosition'		=> $this->pickerPosition,
-				//
-				'initialDate'			=> $this->value ? $this->value->format($this->toPhpFormat($this->dateFormat)) : ''
 			],
 		];
 
 		// The earliest date that may be selected
 		if ($this->startDateTime !== NULL) {
-			$settings['date']['minDate']	= $this->startDateTime->format($this->toPhpFormat($this->dateFormat));
-			$settings['date']['startDate']	= $this->startDateTime->format($this->toPhpFormat($this->dateFormat));
+			$settings['date']['minDate']	= $this->startDateTime->format($this->getDateFormat(TRUE));
+			$settings['date']['startDate']	= $this->startDateTime->format($this->getDateFormat(TRUE));
 		}
 
 		// The latest date that may be selected
 		if ($this->endDateTime !== NULL) {
-			$settings['date']['endDate']	= $this->endDateTime->format($this->toPhpFormat($this->dateFormat));
-			$settings['date']['maxDate']	= $this->endDateTime->format($this->toPhpFormat($this->dateFormat));
+			$settings['date']['endDate']	= $this->endDateTime->format($this->getDateFormat(TRUE));
+			$settings['date']['maxDate']	= $this->endDateTime->format($this->getDateFormat(TRUE));
 		}
 
 		// Days of the week that should be disabled. Values are 0 (Sunday) to 6 (Saturday)
@@ -414,7 +404,7 @@ class Date extends BaseControl
 
 		// Default date
 		if ($this->value) {
-			$settings['date']['initialDate'] = $this->value->format($this->toPhpFormat($this->dateFormat));
+			$settings['date']['initialDate'] = $this->value->format($this->getDateFormat(TRUE));
 		}
 
 		return $settings;
@@ -431,14 +421,26 @@ class Date extends BaseControl
 	 */
 	public function setValue($value)
 	{
-		// DateTime object
-		if ($value instanceof Utils\DateTime || $value instanceof \DateTime) {
+		// Nette\Utils\DateTime object
+		if ($value instanceof Utils\DateTime) {
 			$rawValue = $value;
+
+		// \DateTime object
+		} else if($value instanceof \DateTime) {
+			$rawValue = $value;
+
+			// Convert \DateTime to \Nette\Utils\DateTime
+			$value = Utils\DateTime::createFromFormat($this->getDateFormat(TRUE), $value->format($this->toPhpFormat($this->dateFormat)));
 
 		// Timestamp
 		} else if (is_int($value)) {
 			$rawValue = $value;
-			$value = (new Utils\DateTime())->setTimestamp($value)->format($this->toPhpFormat($this->dateFormat));
+			$value = (new Utils\DateTime())->setTimestamp($value);
+
+			// Check if value is valid timestamp
+			if ($value === FALSE) {
+				throw new Nette\InvalidArgumentException;
+			}
 
 		// Empty value
 		} else if (empty($value)) {
@@ -448,20 +450,75 @@ class Date extends BaseControl
 		// String representation
 		} else if (is_string($value)) {
 			$rawValue = $value;
-			$value = Utils\DateTime::createFromFormat($this->toPhpFormat($this->dateFormat), $value)->format($this->toPhpFormat($this->dateFormat));
+			$value = Utils\DateTime::createFromFormat($this->getDateFormat(TRUE), $value);
+
+			// Check if value is valid string
+			if ($value === FALSE) {
+				throw new Nette\InvalidArgumentException;
+			}
 
 		} else {
 			throw new Nette\InvalidArgumentException;
 		}
 
 		if (!isset($rawValue) && isset($value)) {
-			$rawValue = $value->format($this->toPhpFormat($this->dateFormat));
+			$rawValue = $value->format($this->getDateFormat(TRUE));
 		}
 
 		$this->value	= $value;
 		$this->rawValue	= $rawValue;
 
 		return $this;
+	}
+
+	/**
+	 * @return Utils\DateTime|null
+	 */
+	public function getValue()
+	{
+		$value = parent::getValue();
+
+		if ($value instanceof Utils\DateTime) {
+			return $value;
+
+		} else if ($value === FALSE || $value === NULL) {
+			return NULL;
+
+		} else {
+			$value = Utils\DateTime::createFromFormat($this->getDateFormat(TRUE), $value);
+
+			if ($value === FALSE) {
+				return NULL;
+			}
+		}
+
+		return $value;
+	}
+
+	public function loadHttpData()
+	{
+		try {
+			$this->setValue($this->getHttpData(Forms\Form::DATA_LINE, '[' . static::FIELD_NAME_DATE . ']'));
+
+		} catch (Nette\InvalidArgumentException $ex) {
+			$this->value = NULL;
+		}
+	}
+
+	/**
+	 * @param bool $php
+	 *
+	 * @return string
+	 */
+	protected function getDateFormat($php = FALSE)
+	{
+		$format = (strpos($this->dateFormat, '!') === FALSE ? '!' : '') . $this->dateFormat;
+
+		if ($php) {
+			$format = $this->toPhpFormat($format);
+		}
+
+		return $format;
 	}
 
 	/**

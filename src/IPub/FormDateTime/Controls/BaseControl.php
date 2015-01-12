@@ -281,6 +281,16 @@ abstract class BaseControl extends Forms\Controls\BaseControl
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function isFilled()
+	{
+		$value = $this->getRawValue();
+
+		return $value !== NULL && $value !== array() && $value !== '';
+	}
+
+	/**
 	 * Adds a validation rule
 	 *
 	 * @param  mixed $validator rule type

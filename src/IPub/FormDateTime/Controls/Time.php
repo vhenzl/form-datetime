@@ -145,7 +145,7 @@ class Time extends BaseControl
 			$control->addAttributes([
 				'name'				=> ($name . '[' . static::FIELD_NAME_TIME . ']'),
 				'type'				=> 'text',
-				'value'				=> $this->value->format($this->toPhpFormat($this->timeFormat)),
+				'value'				=> $this->value ? $this->value->format($this->toPhpFormat($this->timeFormat)) : NULL,
 				'required'			=> $this->isRequired(),
 				'disabled'			=> $this->isDisabled(),
 				'data-nette-rules'	=> self::exportRules($this->rules) ?: NULL,
@@ -159,15 +159,6 @@ class Time extends BaseControl
 		}
 
 		throw new Nette\InvalidArgumentException('Part ' . $key . ' does not exist');
-	}
-
-	public function loadHttpData()
-	{
-		// Get time value
-		$time = $this->getHttpData(Forms\Form::DATA_LINE, '[' . static::FIELD_NAME_TIME . ']');
-
-		// Store control value
-		$this->value = Utils\DateTime::createFromFormat($this->toPhpFormat($this->timeFormat), $time);
 	}
 
 	/**
@@ -198,19 +189,22 @@ class Time extends BaseControl
 				'language'				=> $this->language,
 				// Whether or not to force parsing of the input value when the picker is closed
 				'forceParse'			=> $this->forceParse,
-				//
-				'initialDate'			=> $this->value ? $this->value->format($this->toPhpFormat($this->timeFormat)) : ''
 			]
 		];
 
 		// The earliest date that may be selected
 		if ($this->startDateTime !== NULL) {
-			$settings['time']['startDate'] = $this->startDateTime->format($this->toPhpFormat($this->dateFormat));
+			$settings['time']['startDate'] = $this->startDateTime->format($this->getTimeFormat(TRUE));
 		}
 
 		// The latest date that may be selected
 		if ($this->endDateTime !== NULL) {
-			$settings['time']['endDate'] = $this->endDateTime->format($this->toPhpFormat($this->dateFormat));
+			$settings['time']['endDate'] = $this->endDateTime->format($this->getTimeFormat(TRUE));
+		}
+
+		// Default date
+		if ($this->value) {
+			$settings['date']['initialDate'] = $this->value->format($this->getTimeFormat(TRUE));
 		}
 
 		return $settings;
@@ -227,37 +221,105 @@ class Time extends BaseControl
 	 */
 	public function setValue($value)
 	{
-		// DateTime object
-		if ($value instanceof Utils\DateTime || $value instanceof \DateTime) {
+		// Nette\Utils\DateTime object
+		if ($value instanceof Utils\DateTime) {
 			$rawValue = $value;
+
+		// \DateTime object
+		} else if($value instanceof \DateTime) {
+			$rawValue = $value;
+
+			// Convert \DateTime to \Nette\Utils\DateTime
+			$value = Utils\DateTime::createFromFormat($this->getTimeFormat(TRUE), $value->format($this->toPhpFormat($this->timeFormat)));
 
 			// Timestamp
 		} else if (is_int($value)) {
 			$rawValue = $value;
-			$value = (new Utils\DateTime())->setTimestamp($value)->format($this->toPhpFormat($this->timeFormat));
+			$value = (new Utils\DateTime())->setTimestamp($value);
 
-			// Empty value
+			// Check if value is valid timestamp
+			if ($value === FALSE) {
+				throw new Nette\InvalidArgumentException;
+			}
+
+		// Empty value
 		} else if (empty($value)) {
 			$rawValue = $value;
 			$value = NULL;
 
-			// String representation
+		// String representation
 		} else if (is_string($value)) {
 			$rawValue = $value;
-			$value = Utils\DateTime::createFromFormat($this->toPhpFormat($this->timeFormat), $value)->format($this->toPhpFormat($this->timeFormat));
+
+			$value = Utils\DateTime::createFromFormat($this->getTimeFormat(TRUE), $value);
+
+			// Check if value is valid string
+			if ($value === FALSE) {
+				throw new Nette\InvalidArgumentException;
+			}
 
 		} else {
 			throw new Nette\InvalidArgumentException;
 		}
 
 		if (!isset($rawValue) && isset($value)) {
-			$rawValue = $value->format($this->toPhpFormat($this->timeFormat));
+			$rawValue = $value->format($this->getTimeFormat(TRUE));
 		}
 
 		$this->value	= $value;
 		$this->rawValue	= $rawValue;
 
 		return $this;
+	}
+
+	/**
+	 * @return Utils\DateTime|null
+	 */
+	public function getValue()
+	{
+		$value = parent::getValue();
+
+		if ($value instanceof Utils\DateTime) {
+			return $value;
+
+		} else if ($value === FALSE || $value === NULL) {
+			return NULL;
+
+		} else {
+			$value = Utils\DateTime::createFromFormat($this->getTimeFormat(TRUE), $value);
+
+			if ($value === FALSE) {
+				return NULL;
+			}
+		}
+
+		return $value;
+	}
+
+	public function loadHttpData()
+	{
+		try {
+			$this->setValue($this->getHttpData(Forms\Form::DATA_LINE, '[' . static::FIELD_NAME_TIME . ']'));
+
+		} catch (Nette\InvalidArgumentException $ex) {
+			$this->value = NULL;
+		}
+	}
+
+	/**
+	 * @param bool $php
+	 *
+	 * @return string
+	 */
+	protected function getTimeFormat($php = FALSE)
+	{
+		$format = (strpos($this->timeFormat, '!') === FALSE ? '!' : '') . $this->timeFormat;
+
+		if ($php) {
+			$format = $this->toPhpFormat($format);
+		}
+
+		return $format;
 	}
 
 	/**

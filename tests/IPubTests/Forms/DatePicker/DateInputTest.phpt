@@ -67,6 +67,15 @@ class DateInputTest extends Tester\TestCase
 		];
 	}
 
+	public function dataTemplates()
+	{
+		return [
+			['bootstrap.latte', "div[data-ipub-forms-datepicker-type='bootstrap']"],
+			['uikit.latte', "div[data-ipub-forms-datepicker-type='uikit']"],
+			['default.latte', "div[data-ipub-forms-datepicker-type='default']"],
+		];
+	}
+
 	/**
 	 * @dataProvider dataValidInputValues
 	 *
@@ -131,6 +140,26 @@ class DateInputTest extends Tester\TestCase
 		$dq = Tester\DomQuery::fromHtml((string) $control->getControl());
 
 		Assert::true($dq->has("input[value='2015-01-10']"));
+	}
+
+	/**
+	 * @dataProvider dataTemplates
+	 *
+	 * @param string $template
+	 * @param string $expected
+	 */
+	public function testHtmlTemplates($template, $expected)
+	{
+		// Create form control
+		$control = $this->createControl();
+		// Set form control value
+		$control->setValue(new Utils\DateTime('2015-01-10 00:00:00'));
+		// Set one of default templates
+		$control->setTemplate($template);
+
+		$dq = Tester\DomQuery::fromHtml((string) $control->getControl());
+
+		Assert::true($dq->has($expected));
 	}
 
 	/**

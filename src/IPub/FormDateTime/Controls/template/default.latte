@@ -1,1 +1,24 @@
-<strong>Please select one of the following templates: UIkit or Bootstrap</strong>
+<div class="ipub-datepicker" data-ipub-forms-datepicker data-ipub-forms-datepicker-type="default" data-settings="{json_encode($settings)}">
+	{if isset($dateInput)}
+		<div n:if="$showButtons && $buttonsPosition == 'before' && ($showTriggerButton || $showCancelButton)" class="ipub-button-group">
+			<a n:if="$showTriggerButton" href="#" class="ipub-button ipub-button-select" data-action="datepicker.show"><i class="ipub-icon-calendar"></i></a>
+			<a n:if="$showCancelButton" href="#" class="ipub-button ipub-button-cancel" data-action="datepicker.clear"><i class="ipub-icon-remove"></i></a>
+		</div>
+		{$dateInput}
+		<div n:if="$showButtons && $buttonsPosition == 'after' && ($showTriggerButton || $showCancelButton)" class="ipub-button-group">
+			<a n:if="$showTriggerButton" href="#" class="ipub-button ipub-button-select" data-action="datepicker.show"><i class="ipub-icon-calendar"></i></a>
+			<a n:if="$showCancelButton" href="#" class="ipub-button ipub-button-cancel" data-action="datepicker.clear"><i class="ipub-icon-remove"></i></a>
+		</div>
+	{/if}
+	{if isset($timeInput)}
+		<div n:if="$showButtons && $buttonsPosition == 'before' && ($showTriggerButton || $showCancelButton)" class="ipub-button-group">
+			<a n:if="$showTriggerButton" href="#" class="ipub-button ipub-button-select" data-action="timepicker.show"><i class="ipub-icon-time"></i></a>
+			<a n:if="$showCancelButton" href="#" class="ipub-button ipub-button-cancel" data-action="timepicker.clear"><i class="ipub-icon-remove"></i></a>
+		</div>
+		{$timeInput}
+		<div n:if="$showButtons && $buttonsPosition == 'after' && ($showTriggerButton || $showCancelButton)" class="ipub-button-group">
+			<a n:if="$showTriggerButton" href="#" class="ipub-button ipub-button-select" data-action="timepicker.show"><i class="ipub-icon-time"></i></a>
+			<a n:if="$showCancelButton" href="#" class="ipub-button ipub-button-cancel" data-action="timepicker.clear"><i class="ipub-icon-remove"></i></a>
+		</div>
+	{/if}
+</div>

@@ -1,0 +1,24 @@
+<div class="ipub-datepicker" data-ipub-forms-datepicker data-ipub-forms-datepicker-type="bootstrap" data-settings="{json_encode($settings)}">
+	{if isset($dateInput)}
+		<div n:if="$showButtons && $buttonsPosition == 'before' && ($showTriggerButton || $showCancelButton)" class="btn-group">
+			<a n:if="$showTriggerButton" href="#" class="uk-button" data-action="datepicker.show"><i class="glyphicon glyphicon-calendar"></i></a>
+			<a n:if="$showCancelButton" href="#" class="uk-button" data-action="datepicker.clear"><i class="glyphicon glyphicon-remove"></i></a>
+		</div>
+		{$dateInput}
+		<div n:if="$showButtons && $buttonsPosition == 'after' && ($showTriggerButton || $showCancelButton)" class="btn-group">
+			<a n:if="$showTriggerButton" href="#" class="uk-button" data-action="datepicker.show"><i class="glyphicon glyphicon-calendar"></i></a>
+			<a n:if="$showCancelButton" href="#" class="uk-button" data-action="datepicker.clear"><i class="glyphicon glyphicon-remove"></i></a>
+		</div>
+	{/if}
+	{if isset($timeInput)}
+		<div n:if="$showButtons && $buttonsPosition == 'before' && ($showTriggerButton || $showCancelButton)" class="btn-group">
+			<a n:if="$showTriggerButton" href="#" class="uk-button" data-action="timepicker.show"><i class="glyphicon glyphicon-time"></i></a>
+			<a n:if="$showCancelButton" href="#" class="uk-button" data-action="timepicker.clear"><i class="glyphicon glyphicon-remove"></i></a>
+		</div>
+		{$timeInput}
+		<div n:if="$showButtons && $buttonsPosition == 'after' && ($showTriggerButton || $showCancelButton)" class="btn-group">
+			<a n:if="$showTriggerButton" href="#" class="uk-button" data-action="timepicker.show"><i class="glyphicon glyphicon-time"></i></a>
+			<a n:if="$showCancelButton" href="#" class="uk-button" data-action="timepicker.clear"><i class="glyphicon glyphicon-remove"></i></a>
+		</div>
+	{/if}
+</div>

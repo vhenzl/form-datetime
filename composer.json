@@ -1,0 +1,41 @@
+{
+	"name"			: "ipub/form-datetime",
+	"type"			: "library",
+	"description"	: "Nette forms control for adding date, date&time and time fileds on iPublikuj framework",
+	"keywords"		: ["nette", "form", "date", "datepicker", "time", "timepicker", "ipub", "framework", "tools"],
+	"homepage"		: "https://github.com/iPublikuj/form-datetime",
+	"license"		: ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+
+	"authors": [
+		{
+			"name"		: "Adam Kadlec",
+			"homepage"	: "http://www.ipublikuj.eu/"
+		}
+	],
+
+	"support":{
+		"email"		:"support@ipublikuj.eu",
+		"issues"	:"https://github.com/iPublikuj/form-datetime/issues"
+	},
+
+	"require": {
+		"php"				: ">=5.4.0",
+		"nette/application"	: "~2.2",
+		"nette/di"			: "~2.2",
+		"nette/forms"		: "~2.2",
+		"nette/utils"		: "~2.2",
+		"latte/latte"		: "~2.2"
+	},
+
+	"require-dev": {
+		"nette/tester"		: "@dev",
+		"tracy/tracy"		: "~2.2",
+		"janmarek/mockista"	: "@dev"
+	},
+
+	"autoload": {
+		"psr-0": {
+			"IPub\\FormDateTime\\": "src/"
+		}
+	}
+}

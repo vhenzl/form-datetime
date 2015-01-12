@@ -49,7 +49,7 @@ class TimeInputTest extends Tester\TestCase
 	public function dataInvalidInputValues()
 	{
 		return [
-			[39814358000],
+			[39814358000.75489],
 			['some not-date string'],
 			['2015-01-01'],
 			[['timestamp' => 1421020800]],

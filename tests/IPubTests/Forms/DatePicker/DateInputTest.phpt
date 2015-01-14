@@ -13,7 +13,7 @@
  * @date		12.01.15
  */
 
-namespace IPub\Forms\DateTime;
+namespace IPubTests\Forms\DateTime;
 
 use Nette;
 use Nette\Forms;

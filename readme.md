@@ -8,7 +8,7 @@ Add form elements for creating date, date&time and time fields under [Nette Fram
 
 This extension is based on two datetime libraries. For [Bootstrap](http://getbootstrap.com) template is used [js library](http://www.malot.fr/bootstrap-datetimepicker/) from [Sebastien Malot](https://github.com/smalot) and for [UIkit](http://getuikit.com/) template is used their [datepicker](http://getuikit.com/docs/addons_datepicker.html) and [timepicker](http://getuikit.com/docs/addons_timepicker.html) extensions.   
 
-## Instalation
+## Installation
 
 The best way to install ipub/form-datetime is using  [Composer](http://getcomposer.org/):
 

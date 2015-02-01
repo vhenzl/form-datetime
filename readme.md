@@ -157,13 +157,13 @@ Template can be set in form definition:
 ```php
 $form
 	->addDateTimePicker('datetime', 'Date & time picker:')
-	->setTemplate('path/to/your/template.latte');
+	->setTemplateFile('path/to/your/template.latte');
 ```
 
 or in manual renderer of the form:
 
 ```php
-{?$form['datetime']->setTemplate('path/to/your/template.latte')}
+{?$form['datetime']->setTemplateFile('path/to/your/template.latte')}
 {input datetime class => "some-custom-class"}
 ```
 
@@ -172,12 +172,12 @@ and if you want to switch default template to **bootstrap** or **uikit** just it
 ```php
 $form
 	->addDateTimePicker('datetime', 'Date & time picker:')
-	->setTemplate('bootstrap.latte');
+	->setTemplateFile('bootstrap.latte');
 ```
 
 or
 
 ```php
-{?$form['datetime']->setTemplate('bootstrap.latte')}
+{?$form['datetime']->setTemplateFile('bootstrap.latte')}
 {input datetime class => "some-custom-class"}
 ```

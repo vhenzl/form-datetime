@@ -135,7 +135,7 @@ class DateInputTest extends Tester\TestCase
 		// Set form control value
 		$control->setValue(new Utils\DateTime('2015-01-10 00:00:00'));
 		// Set one of default templates
-		$control->setTemplate('bootstrap.latte');
+		$control->setTemplateFile('bootstrap.latte');
 
 		$dq = Tester\DomQuery::fromHtml((string) $control->getControl());
 
@@ -155,7 +155,7 @@ class DateInputTest extends Tester\TestCase
 		// Set form control value
 		$control->setValue(new Utils\DateTime('2015-01-10 00:00:00'));
 		// Set one of default templates
-		$control->setTemplate($template);
+		$control->setTemplateFile($template);
 
 		$dq = Tester\DomQuery::fromHtml((string) $control->getControl());
 

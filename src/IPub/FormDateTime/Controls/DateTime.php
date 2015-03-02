@@ -134,6 +134,12 @@ class DateTime extends Date
 		$name = $this->getHtmlName();
 
 		if ($key === static::FIELD_NAME_TIME) {
+			if (method_exists('Nette\Forms\Helpers', 'exportRules')) {
+				$exportedRules = Forms\Helpers::exportRules($this->rules);
+			} else {
+				$exportedRules = self::exportRules($this->rules);
+			}
+
 			$control = Utils\Html::el('input');
 			$control->addAttributes([
 				'name'				=> ($name . '[' . static::FIELD_NAME_TIME . ']'),
@@ -141,7 +147,7 @@ class DateTime extends Date
 				'value'				=> $this->value ? $this->value->format($this->toPhpFormat($this->timeFormat)) : NULL,
 				'required'			=> $this->isRequired(),
 				'disabled'			=> $this->isDisabled(),
-				'data-nette-rules'	=> self::exportRules($this->rules) ?: NULL,
+				'data-nette-rules'	=> $exportedRules ?: NULL,
 			]);
 
 			if ($this->disabled) {

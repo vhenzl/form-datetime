@@ -238,6 +238,26 @@ abstract class BaseControl extends Forms\Controls\BaseControl
 	}
 
 	/**
+	 * Set JS language code
+	 *
+	 * @param string $language
+	 *
+	 * @return $this
+	 *
+	 * @throws Nette\InvalidArgumentException
+	 */
+	public function setLanguage($language)
+	{
+		if (strlen($language) != 2) {
+			throw new Nette\InvalidArgumentException('Language code could be only 2 chars long.');
+		}
+
+		$this->language = strtolower($language);
+
+		return $this;
+	}
+
+	/**
 	 * Generates control's HTML element
 	 *
 	 * @return Utils\Html

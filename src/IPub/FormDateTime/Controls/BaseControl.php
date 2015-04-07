@@ -373,6 +373,9 @@ abstract class BaseControl extends Forms\Controls\BaseControl
 			} else {
 				throw new Nette\InvalidArgumentException('Provided rule argument is not valid. Date max rule expect \DateTime object.');
 			}
+
+		} else {
+			parent::addRule($validator, $message, $arg);
 		}
 
 		return $this;

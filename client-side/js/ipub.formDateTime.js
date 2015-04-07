@@ -81,11 +81,27 @@
 				return false;
 			});
 
+			this.buttons.$dateClear.click(function (event) {
+				event.preventDefault();
+
+				that.$dateField.val('');
+
+				return false;
+			});
+
 			this.buttons.$timeTrigger.click(function (event) {
 				event.preventDefault();
 
 				that.$timeField.trigger('focus');
 				that.$timeField.trigger('click');
+
+				return false;
+			});
+
+			this.buttons.$timeClear.click(function (event) {
+				event.preventDefault();
+
+				that.$timeField.val('');
 
 				return false;
 			});

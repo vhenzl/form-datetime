@@ -4,7 +4,7 @@
 [![Latest Stable Version](https://img.shields.io/packagist/v/ipub/form-datetime.svg?style=flat-square)](https://packagist.org/packages/ipub/form-datetime)
 [![Composer Downloads](https://img.shields.io/packagist/dt/ipub/form-datetime.svg?style=flat-square)](https://packagist.org/packages/ipub/form-datetime)
 
-Add form elements for creating date, date&time and time fields under [Nette Framework](http://nette.org/) forms
+Forms control for adding date, date&time and time fields for [Nette Framework](http://nette.org/) forms
 
 This extension is based on two datetime libraries. For [Bootstrap](http://getbootstrap.com) template is used [js library](http://www.malot.fr/bootstrap-datetimepicker/) from [Sebastien Malot](https://github.com/smalot) and for [UIkit](http://getuikit.com/) template is used their [datepicker](http://getuikit.com/docs/addons_datepicker.html) and [timepicker](http://getuikit.com/docs/addons_timepicker.html) extensions.   
 

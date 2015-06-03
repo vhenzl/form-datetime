@@ -1,14 +1,15 @@
 {
 	"name"			: "ipub/form-datetime",
 	"type"			: "library",
-	"description"	: "Nette forms control for adding date, date&time and time fileds on iPublikuj framework",
+	"description"	: "Forms control for adding date, date&time and time fields for Nette Framework",
 	"keywords"		: ["nette", "form", "date", "datepicker", "time", "timepicker", "ipub", "framework", "tools"],
 	"homepage"		: "https://github.com/iPublikuj/form-datetime",
 	"license"		: ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 
 	"authors": [
 		{
-			"name"		: "Adam Kadlec",
+			"name"		: "iPublikuj:cms",
+			"email"		: "info@ipublikuj.eu",
 			"homepage"	: "http://www.ipublikuj.eu/"
 		}
 	],

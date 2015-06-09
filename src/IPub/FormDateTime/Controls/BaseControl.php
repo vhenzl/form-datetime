@@ -31,9 +31,9 @@ abstract class BaseControl extends Forms\Controls\BaseControl
 	/**
 	 * Validator constants
 	 */
-	const DATE_TIME_RANGE	= ':dateTimeRange';
-	const DATE_TIME_MIN		= ':dateTimeMin';
-	const DATE_TIME_MAX		= ':dateTimeMax';
+	const DATE_TIME_RANGE	= 'IPub\FormDateTime\Controls\BaseControl::validateDateTimeRange';
+	const DATE_TIME_MIN		= 'IPub\FormDateTime\Controls\BaseControl::validateDateTimeMin';
+	const DATE_TIME_MAX		= 'IPub\FormDateTime\Controls\BaseControl::validateDateTimeMax';
 
 	/**
 	 * Icon left

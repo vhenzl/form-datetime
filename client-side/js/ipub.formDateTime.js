@@ -40,7 +40,7 @@
 		this.$element	= $element;
 
 		this.name		= this.$element.prop('id');
-		this.options	= $.extend($.fn.ipubFormsDateTime.defaults, options, this.$element.data('settings') || {});
+		this.options	= $.extend(IPub.Forms.DateTime.defaults, options, this.$element.data('settings') || {});
 	};
 
 	IPub.Forms.DateTime.prototype =
@@ -205,28 +205,40 @@
 	/**
 	 * Initialize form date picker plugin
 	 *
-	 * @param {jQuery} $element
+	 * @param {jQuery} $elements
 	 * @param {Object} options
 	 */
-	IPub.Forms.DateTime.initialize = function ($element, options)
+	IPub.Forms.DateTime.initialize = function ($elements, options)
 	{
-		$element.each(function() {
-			var $this = $(this);
+		var nodes = new Array();
 
-			if (!$this.data('ipub-forms-datepicker')) {
-				$this.data('ipub-forms-datepicker', (new IPub.Forms.DateTime($this, options).init()));
+		if ($elements.length) {
+			nodes = ($elements instanceof jQuery) ? $elements.get() : $elements;
+
+		} else {
+			nodes = Array.prototype.slice.call(document.querySelectorAll('[data-ipub-forms-datepicker]'), 0);
+		}
+
+		nodes.forEach(function(item, i){
+			if (!item.getAttribute('ipub-forms-datepicker')) {
+				item.setAttribute('ipub-forms-datepicker', (new IPub.Forms.DateTime($(item), options).init()));
 			}
 		});
 	};
 
 	/**
-	 * Autoloading for form date picker plugin
+	 * Registering autoload to document
 	 *
-	 * @returns {jQuery}
+	 * @param fn
 	 */
-	IPub.Forms.DateTime.load = function ()
+	IPub.Forms.DateTime.ready = function(fn)
 	{
-		$('[data-ipub-forms-datepicker]').ipubFormsDateTime();
+		if (document.readyState != 'loading'){
+			fn();
+
+		} else {
+			document.addEventListener('DOMContentLoaded', fn);
+		}
 	};
 
 	/**
@@ -236,13 +248,9 @@
 	var old = $.fn.ipubFormsDateTime;
 
 	$.fn.ipubFormsDateTime = function (options) {
-		return this.each(function () {
-			var $this = $(this);
+		IPub.Forms.DateTime.initialize(this, options);
 
-			if (!$this.data('ipub-forms-datepicker')) {
-				$this.data('ipub-forms-datepicker', (new IPub.Forms.DateTime($this, options).init()));
-			}
-		});
+		return this;
 	};
 
 	/**
@@ -259,7 +267,7 @@
 	 * IPub Forms date picker plugin default settings
 	 */
 
-	$.fn.ipubFormsDateTime.defaults = {
+	IPub.Forms.DateTime.defaults = {
 
 	};
 
@@ -267,8 +275,7 @@
 	 * Complete plugin
 	 */
 
-	// Autoload plugin
-	IPub.Forms.DateTime.load();
+	IPub.Forms.DateTime.ready(IPub.Forms.DateTime.initialize);
 
 	// Assign plugin data to DOM
 	window.IPub = IPub;
@@ -276,4 +283,3 @@
 	return IPub;
 
 })(jQuery, window, document, location, navigator);
-

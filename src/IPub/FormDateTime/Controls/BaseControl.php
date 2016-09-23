@@ -287,7 +287,7 @@ abstract class BaseControl extends Forms\Controls\BaseControl
 		$this->template->showCancelButton	= $this->cancelButton ? TRUE : FALSE;
 
 		return FormDateTime\Utils\Html::el()
-			->add($this->template);
+			->addHtml($this->template);
 	}
 
 	/**

@@ -110,21 +110,21 @@ class Date extends BaseControl
 	/**
 	 * The view that the date picker should show when it is opened
 	 * 
-	 * @var int
+	 * @var string
 	 */
 	protected $startView = self::START_VIEW_MONTH;
 
 	/**
 	 * The lowest view that the date picker should show
 	 * 
-	 * @var int
+	 * @var string
 	 */
 	protected $minView = self::START_VIEW_MONTH;
 
 	/**
 	 * The highest view that the date picker should show
 	 * 
-	 * @var int
+	 * @var string
 	 */
 	protected $maxView = self::START_VIEW_DECADE;
 
@@ -212,13 +212,13 @@ class Date extends BaseControl
 	/**
 	 * The view that the date picker should show when it is opened
 	 *
-	 * @param int $startView
+	 * @param string $startView
 	 *
 	 * @return $this
 	 */
 	public function setStartView($startView = self::START_VIEW_MONTH)
 	{
-		$this->startView = (int) $startView;
+		$this->startView = (string) $startView;
 
 		return $this;
 	}
@@ -226,13 +226,13 @@ class Date extends BaseControl
 	/**
 	 * The lowest view that the date picker should show
 	 *
-	 * @param int $minView
+	 * @param string $minView
 	 *
 	 * @return $this
 	 */
 	public function setMinView($minView = self::START_VIEW_MONTH)
 	{
-		$this->minView = (int) $minView;
+		$this->minView = (string) $minView;
 
 		return $this;
 	}
@@ -240,13 +240,13 @@ class Date extends BaseControl
 	/**
 	 * The highest view that the date picker should show
 	 *
-	 * @param int $maxView
+	 * @param string $maxView
 	 *
 	 * @return $this
 	 */
 	public function setMaxView($maxView = self::START_VIEW_DECADE)
 	{
-		$this->maxView = (int) $maxView;
+		$this->maxView = (string) $maxView;
 
 		return $this;
 	}
@@ -371,11 +371,11 @@ class Date extends BaseControl
 				// Whether or not to close the date picker immediately when a date is selected
 				'autoclose'				=> $this->autoclose ? 'true' : 'false',
 				// The view that the date picker should show when it is opened
-				'startView'				=> self::START_VIEW_MONTH,
+				'startView'				=> $this->startView,
 				// The lowest view that the date picker should show
-				'minView'				=> self::START_VIEW_MONTH,
+				'minView'				=> $this->minView,
 				// The highest view that the date picker should show
-				'maxView'				=> self::START_VIEW_DECADE,
+				'maxView'				=> $this->maxView,
 				// If true or "linked", displays a "Today" button at the bottom of the date picker to select the current date
 				'todayBtn'				=> $this->todayButton,
 				// If TRUE, highlights the current date.

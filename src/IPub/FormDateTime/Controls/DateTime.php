@@ -123,21 +123,21 @@ class DateTime extends Date
 	}
 
 	/**
-	 * @param string $key
+	 * @param string|NULL $key
 	 *
 	 * @return Utils\Html
 	 *
 	 * @throws Nette\InvalidArgumentException
 	 */
-	public function getControlPart($key)
+	public function getControlPart($key = NULL)
 	{
 		$name = $this->getHtmlName();
 
 		if ($key === static::FIELD_NAME_TIME) {
 			if (method_exists('Nette\Forms\Helpers', 'exportRules')) {
-				$exportedRules = Forms\Helpers::exportRules($this->rules);
+				$exportedRules = Forms\Helpers::exportRules($this->getRules());
 			} else {
-				$exportedRules = self::exportRules($this->rules);
+				$exportedRules = self::exportRules($this->getRules());
 			}
 
 			$control = Utils\Html::el('input');
